@@ -32,12 +32,9 @@ def ask_tutor(user_query, context):
         )
 
         if hasattr(response, "choices") and len(response.choices) > 0:
-            print("Response from OpenRouter:", response.choices[0].message.content)
             return response.choices[0].message.content
         else:
-            print("Unexpected response format:", response)
             return str(response)
     except Exception as e:
-        print("Error occurred:", e)
         return "Sorry, I encountered an error while processing your request."
 
