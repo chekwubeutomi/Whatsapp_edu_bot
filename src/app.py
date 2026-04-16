@@ -16,6 +16,8 @@ def home():
     return "The Edu-Bot Server is LIVE! Send a WhatsApp message to test."
 
 
+
+
 @app.route("/webhook", methods=["POST"])
 def bot():
     incoming_msg = request.values.get("Body", "").lower()

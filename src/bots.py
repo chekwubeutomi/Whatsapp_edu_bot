@@ -3,7 +3,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",  # NO trailing slash here
+    api_key=os.getenv("OPEN_ROUTER_API_KEY"),
+    default_headers={
+        "HTTP-Referer": "http://localhost:5000", # Required for some free models
+        "X-Title": "EduBot_Pilot",
+    }
+)
+
+
+
 
 def ask_tutor(user_query, context):
     prompt = f"""
@@ -15,9 +25,16 @@ def ask_tutor(user_query, context):
     Student's Question: {user_query}
     """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
+    try:
+        response = client.chat.completions.create(
+            model="openrouter/auto",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-    return response.choices[0].message.content
+        if hasattr(response, "choices") and len(response.choices) > 0:
+            return response.choices[0].message.content
+        else:
+            return str(response)
+    except Exception as e:
+        return "Sorry, I encountered an error while processing your request."
+
